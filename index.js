@@ -53,6 +53,14 @@ async function run() {
             res.send(result)
         })
 
+        // find one data
+        app.get('/movies/:id',async(req,res)=>{
+            const id = req.params.id;
+            const quarry = {_id: new ObjectId(id)}
+            const result = await moviesCollection.findOne(quarry)
+            res.send(result)
+        })
+
         // update
         app.patch('/movies/:id', async (req, res) => {
             const id = req.params.id;
