@@ -46,8 +46,15 @@ async function run() {
             res.send(result)
         })
 
+        // app get
+        app.get('/movies', async (req, res) => {
+            const cursor = moviesCollection.find()
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
         // update
-         app.patch('/movies/:id', async (req, res) => {
+        app.patch('/movies/:id', async (req, res) => {
             const id = req.params.id;
             const updateMovies = req.body;
             const query = { _id: new ObjectId(id) }
