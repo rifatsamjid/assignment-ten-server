@@ -1,6 +1,6 @@
 const express = require('express')
 const cors = require('cors')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
 const port = process.env.PORT || 4000
 
@@ -31,10 +31,34 @@ async function run() {
         const moviesCollection = db.collection("movies")
 
 
-        
-         app.post('/movies', async (req, res) => {
+        // api add
+        app.post('/movies', async (req, res) => {
             const newProduct = req.body;
             const result = await moviesCollection.insertOne(newProduct)
+            res.send(result)
+        })
+
+        // api delete
+        app.delete('/movies/:id', async (req, res) => {
+            const id = req.params.id;
+            const quarry = { _id: new ObjectId(id) }
+            const result = await moviesCollection.deleteOne(quarry)
+            res.send(result)
+        })
+
+        // update
+         app.patch('/movies/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateMovies = req.body;
+            const query = { _id: new ObjectId(id) }
+
+            const update = {
+                $set: {
+                    name: updateMovies.name,
+                    price: updateMovies.price
+                }
+            }
+            const result = await moviesCollection.updateOne(query, update)
             res.send(result)
         })
 
