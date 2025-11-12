@@ -25,7 +25,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
-        await client.connect();
+        // await client.connect();
 
         const db = client.db("movie_db")
         const moviesCollection = db.collection("movies")
@@ -34,9 +34,18 @@ async function run() {
         // api add
         app.post('/movies', async (req, res) => {
             const newProduct = req.body;
-            const result = await moviesCollection.insertMany(newProduct)
+            const result = await moviesCollection.insertOne(newProduct)
             res.send(result)
         })
+
+        // latest-movie
+
+        app.get('/top-rating-movies', async (req, res) => {
+            const cursor = moviesCollection.find().sort({ rating: -1 }).limit(6);
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
 
         // api delete
         app.delete('/movies/:id', async (req, res) => {
@@ -77,7 +86,7 @@ async function run() {
             res.send(result)
         })
 
-        await client.db("admin").command({ ping: 1 });
+        // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
     }
