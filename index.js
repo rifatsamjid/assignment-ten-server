@@ -32,11 +32,12 @@ async function run() {
 
 
         // api add
-        app.post('/movies', async (req, res) => {
+        app.post('/movies/add', async (req, res) => {
             const newProduct = req.body;
             const result = await moviesCollection.insertOne(newProduct)
             res.send(result)
         })
+
 
         // latest-movie
 
