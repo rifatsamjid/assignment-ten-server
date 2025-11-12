@@ -46,13 +46,72 @@ async function run() {
             res.send(result)
         })
 
-        // latest-movie
+        // top rated
+        app.get('/movies/top-rating-movies', async (req, res) => {
+            const { minRating, maxRating } = req.query;
 
-        app.get('/top-rating-movies', async (req, res) => {
-            const cursor = moviesCollection.find().sort({ rating: -1 }).limit(6);
-            const result = await cursor.toArray()
-            res.send(result)
-        })
+            let query = {};
+
+
+            if (minRating || maxRating) {
+                query.rating = {};
+                if (minRating) query.rating.$gte = parseFloat(minRating);
+                if (maxRating) query.rating.$lte = parseFloat(maxRating);
+            }
+
+            const cursor = moviesCollection
+                .find(query)
+                .sort({ rating: -1 })
+                .limit(5);
+            const result = await cursor.toArray();
+            res.send(result);
+        });
+
+
+        // recently added
+        app.get('/movies/recently-added-movies', async (req, res) => {
+            const { genres, minRating, maxRating } = req.query;
+
+            let query = {};
+
+            // genres filter
+            if (genres) {
+                const genreArray = genres.split(',');
+                query.genre = { $in: genreArray };
+            }
+
+            // rating filter
+            if (minRating || maxRating) {
+                const ratingFilter = {};
+                const min = parseFloat(minRating);
+                const max = parseFloat(maxRating);
+
+                if (!isNaN(min)) ratingFilter.$gte = min;
+                if (!isNaN(max)) ratingFilter.$lte = max;
+
+                // Only add to query if valid
+                if (Object.keys(ratingFilter).length > 0) {
+                    query.rating = ratingFilter;
+                }
+            }
+
+            try {
+                const cursor = moviesCollection
+                    .find(query)
+                    .sort({ releaseYear: -1 })
+                    .limit(6);
+
+                const result = await cursor.toArray();
+                res.send(result);
+            } catch (err) {
+                console.error(err);
+                res.status(500).send({ error: "Server error" });
+            }
+        });
+
+
+
+
 
 
         // api delete
