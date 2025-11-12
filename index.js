@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+require('dotenv').config();
 const app = express()
 const port = process.env.PORT || 4000
 
@@ -8,11 +9,10 @@ const port = process.env.PORT || 4000
 app.use(cors())
 app.use(express.json())
 
-// moviesdb
-// 3Ps4YlSfRc0AID3u
 
 
-const uri = "mongodb+srv://moviesdb:3Ps4YlSfRc0AID3u@cluster1.jkfjkqt.mongodb.net/?appName=Cluster1";
+
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster1.jkfjkqt.mongodb.net/?appName=Cluster1`;
 
 const client = new MongoClient(uri, {
     serverApi: {
@@ -34,7 +34,7 @@ async function run() {
         // api add
         app.post('/movies', async (req, res) => {
             const newProduct = req.body;
-            const result = await moviesCollection.insertOne(newProduct)
+            const result = await moviesCollection.insertMany(newProduct)
             res.send(result)
         })
 
@@ -54,9 +54,9 @@ async function run() {
         })
 
         // find one data
-        app.get('/movies/:id',async(req,res)=>{
+        app.get('/movies/:id', async (req, res) => {
             const id = req.params.id;
-            const quarry = {_id: new ObjectId(id)}
+            const quarry = { _id: new ObjectId(id) }
             const result = await moviesCollection.findOne(quarry)
             res.send(result)
         })
