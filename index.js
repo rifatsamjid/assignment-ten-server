@@ -38,6 +38,13 @@ async function run() {
             res.send(result)
         })
 
+        // get movies added by users
+        app.get('/movies/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { addeBy: email };
+            const result = await moviesCollection.find(query).toArray()
+            res.send(result)
+        })
 
         // latest-movie
 
