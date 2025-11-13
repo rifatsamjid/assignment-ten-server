@@ -29,7 +29,7 @@ async function run() {
 
         const db = client.db("movie_db")
         const moviesCollection = db.collection("movies")
-         const usersCollection = db.collection('users');
+        const usersCollection = db.collection("users");
 
         // users api
         app.post('/users', async (req, res) => {
@@ -45,6 +45,12 @@ async function run() {
                 res.send(result)
             }
         })
+
+        // users get
+        app.get('/users', async (req, res) => {
+            const users = await usersCollection.find({}).toArray();
+            res.send(users);
+        });
 
 
         // api add
