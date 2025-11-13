@@ -138,20 +138,31 @@ async function run() {
         })
 
         // update
-        app.patch('/movies/:id', async (req, res) => {
+        app.put('/movies/:id', async (req, res) => {
             const id = req.params.id;
-            const updateMovies = req.body;
-            const query = { _id: new ObjectId(id) }
+            const updatedMovie = req.body;
 
-            const update = {
+            const filter = { _id: new ObjectId(id) };
+            const updateDoc = {
                 $set: {
-                    name: updateMovies.name,
-                    price: updateMovies.price
-                }
-            }
-            const result = await moviesCollection.updateOne(query, update)
-            res.send(result)
-        })
+                    title: updatedMovie.title,
+                    genre: updatedMovie.genre,
+                    releaseYear: updatedMovie.releaseYear,
+                    director: updatedMovie.director,
+                    cast: updatedMovie.cast,
+                    rating: updatedMovie.rating,
+                    duration: updatedMovie.duration,
+                    plotSummary: updatedMovie.plotSummary,
+                    posterUrl: updatedMovie.posterUrl,
+                    language: updatedMovie.language,
+                    country: updatedMovie.country,
+                    addedBy: updatedMovie.addedBy
+                },
+            };
+
+            const result = await moviesCollection.updateOne(filter, updateDoc);
+            res.send(result);
+        });
 
         // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
